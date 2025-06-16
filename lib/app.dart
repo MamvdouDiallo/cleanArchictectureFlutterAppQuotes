@@ -8,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'config/routes/app_routes.dart';
+import 'config/themes/app_theme.dart';
 
 class QuoteApp extends StatelessWidget {
   const QuoteApp({super.key});
@@ -16,10 +17,7 @@ class QuoteApp extends StatelessWidget {
     return MaterialApp(
       title: AppStrings.appName,
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-       primaryColor: HexColor('#451BAB'),
-        useMaterial3: true,
-      ),
+      theme: appTheme(),
      onGenerateRoute: AppRoutes.onGenerateRoute,
     );
   }

@@ -1,0 +1,17 @@
+
+import 'package:equatable/equatable.dart';
+
+class Quote extends Equatable{
+  final int id;
+  final String author;
+  final String content;
+  final String permalink;
+
+ const Quote({ required this.author, required this.id, required this.content, required this.permalink});
+
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [author,id,content,permalink];
+
+}

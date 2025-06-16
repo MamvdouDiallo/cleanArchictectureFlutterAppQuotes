@@ -23,7 +23,8 @@ class AppRoutes {
   static Route? onGenerateRoute(RouteSettings routeSettings) {
     switch (routeSettings.name) {
       case Routes.initialRoute:
-        return MaterialPageRoute(builder: ((context)=> const QuoteScreen()));
+        return MaterialPageRoute(builder: ((context)=>
+        const QuoteScreen()));
       case Routes.favouriteQuoteRoute:
         return MaterialPageRoute(builder: ((context)=> const FavoruteQuoteScreen()));
       default:

@@ -16,7 +16,7 @@ ThemeData appTheme() {
           color: Colors.transparent,
           elevation: 0,
           titleTextStyle: TextStyle(
-              fontWeight: FontWeight.w500, color: Colors.black, fontSize: 20)),
+              fontWeight: FontWeight.bold, color: Colors.black, fontSize: 20)),
       textTheme: const TextTheme(
         bodyMedium: TextStyle(
             height: 1.3,
