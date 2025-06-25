@@ -15,6 +15,8 @@ abstract class RandomQuoteLocalDataSource{
 
 class RandomQuoteLocalDataSourceImpl implements RandomQuoteLocalDataSource{
   late final SharedPreferences sharedPreferences;
+  RandomQuoteLocalDataSourceImpl({required this.sharedPreferences});
+
   @override
   Future<void> cacheQuote(QuoteModel quoteModel) {
 return sharedPreferences.setString(AppStrings.cachedRandomQuote, jsonEncode(quoteModel));

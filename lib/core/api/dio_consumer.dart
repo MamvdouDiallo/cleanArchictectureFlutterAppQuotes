@@ -1,6 +1,17 @@
 import 'dart:convert';
 import 'dart:io';
-/*
+
+import 'package:clean_architecture_flutter/core/api/status_code.dart';
+import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
+import 'package:flutter/foundation.dart';
+
+import '../../features/injection_container.dart' as di;
+import '../error/exceptions.dart';
+import 'api_consumer.dart';
+import 'app_interceptors.dart';
+import 'end_point.dart';
+
 
 class DioConsumer implements ApiConsumer {
   final Dio client;
@@ -14,7 +25,7 @@ class DioConsumer implements ApiConsumer {
     };
 
     client.options
-      ..baseUrl = EndPoints.baseUrl
+      ..baseUrl = Endpoint.baseUrl
       ..responseType = ResponseType.plain
       ..followRedirects = false
       ..validateStatus = (status) {
@@ -26,12 +37,13 @@ class DioConsumer implements ApiConsumer {
     }
   }
 
+
   @override
   Future get(String path, {Map<String, dynamic>? queryParameters}) async {
     try {
       final response = await client.get(path, queryParameters: queryParameters);
       return _handleResponseAsJson(response);
-    } on DioError catch (error) {
+    } on DioException catch (error) {
       _handleDioError(error);
     }
   }
@@ -39,14 +51,14 @@ class DioConsumer implements ApiConsumer {
   @override
   Future post(String path,
       {Map<String, dynamic>? body,
-      bool formDataIsEnabled = false,
-      Map<String, dynamic>? queryParameters}) async {
+        bool formDataIsEnabled = false,
+        Map<String, dynamic>? queryParameters}) async {
     try {
       final response = await client.post(path,
           queryParameters: queryParameters,
           data: formDataIsEnabled ? FormData.fromMap(body!) : body);
       return _handleResponseAsJson(response);
-    } on DioError catch (error) {
+    } on DioException catch (error) {
       _handleDioError(error);
     }
   }
@@ -54,12 +66,12 @@ class DioConsumer implements ApiConsumer {
   @override
   Future put(String path,
       {Map<String, dynamic>? body,
-      Map<String, dynamic>? queryParameters}) async {
+        Map<String, dynamic>? queryParameters}) async {
     try {
       final response =
-          await client.put(path, queryParameters: queryParameters, data: body);
+      await client.put(path, queryParameters: queryParameters, data: body);
       return _handleResponseAsJson(response);
-    } on DioError catch (error) {
+    } on DioException catch (error) {
       _handleDioError(error);
     }
   }
@@ -69,35 +81,48 @@ class DioConsumer implements ApiConsumer {
     return responseJson;
   }
 
-  dynamic _handleDioError(DioError error) {
+  //dynamic _handleDioError(DioError error) {}
+
+  dynamic _handleDioError(DioException error) {
     switch (error.type) {
-      case DioErrorType.connectTimeout:
-      case DioErrorType.sendTimeout:
-      case DioErrorType.receiveTimeout:
-        throw const FetchDataException();
-      case DioErrorType.response:
-        switch (error.response?.statusCode) {
+      case DioExceptionType.connectionTimeout:
+      case DioExceptionType.sendTimeout:
+      case DioExceptionType.receiveTimeout:
+        throw const FetchDataException('Erreur de timeout de connexion');
+
+      case DioExceptionType.badResponse:
+        final statusCode = error.response?.statusCode;
+        switch (statusCode) {
           case StatusCode.badRequest:
-            throw const BadRequestException();
+            throw const BadRequestException('Requête incorrecte');
           case StatusCode.unauthorized:
           case StatusCode.forbidden:
-            throw const UnauthorizedException();
+            throw const UnauthorizedException('Non autorisé');
           case StatusCode.notFound:
-            throw const NotFoundException();
+            throw const NotFoundException('Ressource non trouvée');
           case StatusCode.confilct:
-            throw const ConflictException();
-
+            throw const ConflictException('Conflit détecté');
           case StatusCode.internalServerError:
-            throw const InternalServerErrorException();
+            throw const InternalServerErrorException('Erreur serveur');
+          default:
+            throw const FetchDataException('Erreur inconnue');
         }
-        break;
-      case DioErrorType.cancel:
-        break;
-      case DioErrorType.other:
-        throw const NoInternetConnectionException();
+
+      case DioExceptionType.cancel:
+        throw const CancelRequestException('Requête annulée');
+
+      case DioExceptionType.connectionError:
+        throw const NoInternetConnectionException('Pas de connexion internet');
+
+      case DioExceptionType.unknown:
+        if (error.error is SocketException) {
+          throw const NoInternetConnectionException(
+              'Pas de connexion internet');
+        }
+        throw const FetchDataException('Erreur inconnue');
+
+      case DioExceptionType.badCertificate:
+        throw const BadCertificateException('Certificat invalide');
     }
   }
 }
-
-
- */

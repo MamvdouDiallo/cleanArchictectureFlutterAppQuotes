@@ -10,13 +10,28 @@ import 'package:meta/meta.dart';
 
 part 'random_quote_state.dart';
 
+/*
 class RandomQuoteCubit extends Cubit<RandomQuoteState> {
   final GetRandomQuote getRandomQuoteUseCase;
   RandomQuoteCubit({required this.getRandomQuoteUseCase}) : super(RandomQuoteInitial());
-
+/*
   Future<void> getRandomQuote() async{
+    emit(RandomQuoteIsLoading());
     Either<Failure,Quote> response= await getRandomQuoteUseCase(NoParams());
     emit(response.fold((failure) => RandomQuoteError(msg: _mapFailureToMsg(failure)), (quote) => RandomQuoteLoaded(quote: quote)));
+  }
+
+ */
+
+  Future<void> getRandomQuote() async {
+    emit(RandomQuoteIsLoading());
+    //Either<Failure, Quote> response = await getRandomQuoteUseCase(NoParams());
+    print("Avant l'appel au use case");
+    Either<Failure, Quote> response = await getRandomQuoteUseCase(NoParams());
+    print("Après l'appel au use case"); // Si ce log ne s'affiche pas, le problème vient du use case
+    emit(response.fold(
+            (failure) => RandomQuoteError(msg: _mapFailureToMsg(failure)),
+            (quote) => RandomQuoteLoaded(quote: quote)));
   }
 
   String _mapFailureToMsg(Failure failure){
@@ -31,4 +46,51 @@ class RandomQuoteCubit extends Cubit<RandomQuoteState> {
   }
 
 
+}
+
+
+ */
+
+class RandomQuoteCubit extends Cubit<RandomQuoteState> {
+  final GetRandomQuote getRandomQuoteUseCase;
+  RandomQuoteCubit({required this.getRandomQuoteUseCase})
+      : super(RandomQuoteInitial());
+
+
+  Future<void> getRandomQuote() async {
+    emit(RandomQuoteIsLoading());
+    print("Chargement en cours...");
+
+    try {
+      print("Début de l'appel au use case");
+      final response = await getRandomQuoteUseCase(NoParams());
+      print("Réponse reçue: $response");
+
+      response.fold(
+            (failure) {
+          print("Échec: ${_mapFailureToMsg(failure)}");
+          emit(RandomQuoteError(msg: _mapFailureToMsg(failure)));
+        },
+            (quote) {
+          print("Succès: $quote");
+          emit(RandomQuoteLoaded(quote: quote));
+        },
+      );
+    } catch (e, stackTrace) {
+      print("Erreur non gérée: $e\n$stackTrace");
+      emit(RandomQuoteError(msg: "Erreur inattendue"));
+    }
+  }
+
+  String _mapFailureToMsg(Failure failure) {
+    switch (failure.runtimeType) {
+      case ServerFailure:
+        return AppStrings.serverFailure;
+      case CacheFailure:
+        return AppStrings.cacheFailure;
+
+      default:
+        return AppStrings.unexpectedError;
+    }
+  }
 }

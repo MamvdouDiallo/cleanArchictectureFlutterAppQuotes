@@ -28,13 +28,12 @@ class _QuoteScreenState extends State<QuoteScreen> {
   _getRandomQuote(){
     BlocProvider.of<RandomQuoteCubit>(context).getRandomQuote();
   }
-/* @override
+ @override
  void initState(){
     super.initState();
     _getRandomQuote();
 
- }*/
-
+ }
   Widget _buildBodyContent(){
     return BlocBuilder<RandomQuoteCubit,RandomQuoteState>(builder: (context,state){
 
@@ -45,11 +44,10 @@ class _QuoteScreenState extends State<QuoteScreen> {
           ),
         );
       } else if(state is RandomQuoteError){
-        return error_widget.ErrorWidget();
-      }
-
-
-      else if(state is RandomQuoteLoaded){
+        return error_widget.ErrorWidget(
+          onPress: ()=>_getRandomQuote,
+        );
+      } else if(state is RandomQuoteLoaded){
         return Column(
           children: [
              QuoteContent(

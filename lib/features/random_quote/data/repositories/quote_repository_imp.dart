@@ -10,9 +10,11 @@ import 'package:clean_architecture_flutter/features/random_quote/data/models/quo
 import 'package:clean_architecture_flutter/features/random_quote/domain/entities/quote.dart';
 import 'package:clean_architecture_flutter/features/random_quote/domain/repositories/quote_repository.dart';
 import 'package:dartz/dartz.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 class QuoteRepositoryImpl implements QuoteRepository{
-   final NetworkInfo networkInfo;
+  // final NetworkInfo networkInfo;
+  final NetworkInfo networkInfo;
    final RandomQuoteRemoteDataSource randomQuoteRemoteDataSource;
    final RandomQuoteLocalDataSource randomQuoteLocalDataSource;
   QuoteRepositoryImpl( {

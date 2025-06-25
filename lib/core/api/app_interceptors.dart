@@ -1,8 +1,9 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import '../utils/app_strings.dart';
 
 
-/*
+
 class AppIntercepters extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
@@ -27,4 +28,3 @@ class AppIntercepters extends Interceptor {
 }
 
 
- */
